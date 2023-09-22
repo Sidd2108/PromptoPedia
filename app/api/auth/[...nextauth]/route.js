@@ -1,6 +1,7 @@
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDb } from "@utils/database";
+import User from "@models/user";
 
 const handler = NextAuth({
     providers: [
@@ -9,25 +10,40 @@ const handler = NextAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET
         })
     ],
-    async session({ session }) {
-        try {
-            await connectToDb();
+    callbacks: {
+        async session({ session }) {
+            const sessionUser = await User.findOne({
+                email: session.user.email
+            });
+            session.user.id = sessionUser._id.toString();
 
-            //check if user already exists
+            return session;
+        },
+        async signIn({ profile }) {
+            try {
+                await connectToDb();
 
-            //if not create new user
-            return true;
+                //check if user already exists
+                const userExists = User.findOne({
+                    email: profile.email
+                });
+                //if not create new user
+                if (!userExists) {
+                    await User.create({
+                        email: profile.email,
+                        username: profile.name.replace(" ", "").toLowerCase(),
+                        image: profile.picture
+                    })
+                }
+                return true;
 
-        } catch (error) {
-            console.log(error);
-            return false;
+            } catch (error) {
+                console.log(error.message);
+                return false;
+            }
         }
-    },
-    async signIn({ profile }) {
-
     }
 })
 
 export { handler as GET, handler as POST };
-
-// YT video at 1:20
+// YT video at 1:48
