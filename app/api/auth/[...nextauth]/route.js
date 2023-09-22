@@ -25,10 +25,10 @@ const handler = NextAuth({
                 await connectToDb();
 
                 //check if user already exists
-                const userExists = User.findOne({
+                const userExists = await User.findOne({
                     email: profile.email
                 });
-
+                // console.log(userExists);
                 //if not create new user
                 if (!userExists) {
                     const doc = new User({
