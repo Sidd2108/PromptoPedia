@@ -11,6 +11,7 @@ const handler = NextAuth({
         })
     ],
     callbacks: {
+
         async session({ session }) {
             const sessionUser = await User.findOne({
                 email: session.user.email
@@ -27,13 +28,15 @@ const handler = NextAuth({
                 const userExists = User.findOne({
                     email: profile.email
                 });
+
                 //if not create new user
                 if (!userExists) {
-                    await User.create({
+                    const doc = new User({
                         email: profile.email,
                         username: profile.name.replace(" ", "").toLowerCase(),
                         image: profile.picture
                     })
+                    await doc.save();
                 }
                 return true;
 
@@ -43,6 +46,7 @@ const handler = NextAuth({
             }
         }
     }
+
 })
 
 export { handler as GET, handler as POST };
