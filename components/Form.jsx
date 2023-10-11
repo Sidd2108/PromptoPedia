@@ -3,7 +3,7 @@ import React from 'react'
 
 const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
     return (
-        <section className='w-full max-w-full flex-start flex-col'>
+        <section className='w-full max-w-full flex-start flex-col lg:items-center'>
             <h1 className='head_text text-left'>
                 <span className='blue_gradient'>{type} Post</span>
             </h1>
@@ -48,5 +48,3 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
 }
 
 export default Form
-
-//YT at 1:55
